@@ -4,6 +4,7 @@ from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher.filters.state import State,StatesGroup
 from config import bot
 from ceybords.client_kb import submit_markup, cancel_markup, gender_markup
+from config import ADMINS
 
 class FSMadmin(StatesGroup):
     name = State()
@@ -14,10 +15,14 @@ class FSMadmin(StatesGroup):
 
 async def fsm_start(message:types.Message):
     if message.chat.type == 'private':
-        await FSMadmin.name.set()
-        await message.answer('Здравствуйте, как вас зовут?',reply_markup=cancel_markup)
+        if message.from_user.id not in ADMINS:
+            await message.answer('Вы не Админ')
+        else:
+            await FSMadmin.name.set()
+            await message.answer('Здравствуйте, как вас зовут?', reply_markup=cancel_markup)
     else:
         await message.answer('Пиши в личку')
+
 
 async def load_name(message:types.Message, state: FSMContext):
     async with state.proxy() as data:
