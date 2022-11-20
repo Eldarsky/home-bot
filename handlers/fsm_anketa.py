@@ -5,32 +5,30 @@ from aiogram.dispatcher.filters.state import State,StatesGroup
 from config import bot
 from ceybords.client_kb import submit_markup, cancel_markup, gender_markup
 from config import ADMINS
+from database.bot_db import sql_command_insert
 
 class FSMadmin(StatesGroup):
     name = State()
     directions = State()
     age = State()
-    group = State()
+    krupa = State()
     submit = State()
-
-async def fsm_start(message:types.Message):
+async  def fsm_start(message: types.Message):
     if message.chat.type == 'private':
-        if message.from_user.id not in ADMINS:
-            await message.answer('Вы не Админ')
-        else:
-            await FSMadmin.name.set()
-            await message.answer('Здравствуйте, как вас зовут?', reply_markup=cancel_markup)
+        await FSMadmin.name.set()
+        await message.answer("Здравствуйте как вас зовут?",
+                             reply_markup=cancel_markup)
     else:
-        await message.answer('Пиши в личку')
+        await message.answer("Пиши в личку!")
 
 
 async def load_name(message:types.Message, state: FSMContext):
     async with state.proxy() as data:
+        data['id'] = message.from_user.id
         data['name'] = message.text
-        data ['id'] = message.from_user.id
         data['username'] = f'@{message.from_user.username}'
     await FSMadmin.next()
-    await message.answer('Какая направления?', reply_markup=submit_markup)
+    await message.answer('Какое направления?', reply_markup=submit_markup)
 
 async def load_directions(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
@@ -44,14 +42,15 @@ async def load_age(message: types.Message, state: FSMContext):
     await FSMadmin.next()
     await message.answer("Ваша группа ??",reply_markup=gender_markup)
 
-async def load_group(message: types.Message, state: FSMContext):
+async def load_krupa(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
-        data['group'] = message.text
+        data['krupa'] = message.text
     await FSMadmin.next()
     await message.answer("Очень рад, приятно познакомиться ",)
 
 async def submit(message: types.Message, state: FSMContext):
     if message.text.lower() == "да":
+        await sql_command_insert(state)
         await state.finish()
         await message.answer("Все свободен!")
     elif message.text.lower() == "нет":
@@ -74,5 +73,5 @@ def register_handlers_fsm_anketa(dp:Dispatcher):
     dp.register_message_handler(load_name,state=FSMadmin.name)
     dp.register_message_handler(load_directions, state=FSMadmin.directions)
     dp.register_message_handler(load_age, state=FSMadmin.age)
-    dp.register_message_handler(load_group, state=FSMadmin.group)
+    dp.register_message_handler(load_krupa, state=FSMadmin.krupa)
     dp.register_message_handler(submit, state=FSMadmin.submit)
