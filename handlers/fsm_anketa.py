@@ -39,7 +39,7 @@ async def load_age(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data['age'] = message.text
     await FSMadmin.next()
-    await message.answer("Ваша группа ??",reply_markup=part_markup)
+    await message.answer("Ваша Язык программирования??",reply_markup=part_markup)
 
 async def load_krupa(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
