@@ -1,24 +1,19 @@
 from aiogram.utils import executor
-import logging
 from config import dp
-from handlers import admin, client, collback, extra, fsm_anketa
-from database.bot_db import create_sql
-
-
+import logging
+from handlers import client, collback, extra, admin, fsm_anketa
+from database.bot_db import sql_create
 async def on_startup(_):
-    create_sql()
-
+    sql_create()
 
 client.register_handlers_client(dp)
-collback.register_callback_handlers(dp)
-fsm_anketa.register_handlers_fsm_mentor(dp)
-admin.register_admin_handler(dp)
-extra.register_extra_handler(dp)
-
+collback.register_handlers_collback(dp)
+admin.register_handlers_admin(dp)
+fsm_anketa.register_handlers_fsm_anketa(dp)
+extra.register_handlers_extra(dp)
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
-    executor.start_polling(dp, skip_updates=True, on_startup=on_startup)
-
+    executor.start_polling(dp,skip_updates= True, on_startup=on_startup)
 
 
 
