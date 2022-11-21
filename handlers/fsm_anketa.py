@@ -21,44 +21,44 @@ class FSMAdmin(StatesGroup):
 async def fsm_start(message: types.Message):
     if message.from_user.id in ADMINS:
         await FSMAdmin.mentor_id.set()
-        await message.answer('Добро пожаловать ')
+        await message.answer('Напиши что нибудь')
     else:
         await message.answer('Только админ может регистрировать ментора')
 
 
-async def load_id(message: types.Message, state: FSMContext):
+async def FSM_load_id(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data['mentor_id'] = message.text
     await FSMAdmin.next()
     await message.answer('Укажите имя ментора:', reply_markup=cancel_markup)
 
 
-async def load_name(message: types.Message, state: FSMContext):
+async def FSM_load_name(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data['mentor_name'] = message.text
     await FSMAdmin.next()
     await message.answer('Укажите номер телефона ментора :', reply_markup=cancel_markup)
 
 
-async def load_mentor_id(message: types.Message, state: FSMContext):
+async def FSM_load_mentor_id(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data['mentor_number'] = f'+996{message.text}'
     await FSMAdmin.next()
     await message.answer('Укажите группу ментора:', reply_markup=cancel_markup)
 
 
-async def load_group(message: types.Message, state: FSMContext):
+async def FSM_load_group(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data['mentor_group'] = message.text
     await FSMAdmin.next()
     await message.answer('Возраст ментора:')
 
 
-async def load_age(message: types.Message, state: FSMContext):
+async def FSM_load_age(message: types.Message, state: FSMContext):
     try:
         if 15 <= int(message.text) < 50:
             async with state.proxy() as data:
-                data['mentor_age'] = message.text
+                data['mentor_age'] = int(message.text)
             await FSMAdmin.next()
             await message.answer('Выберите направление ментора: ', reply_markup=part_markup)
         else:
@@ -67,14 +67,14 @@ async def load_age(message: types.Message, state: FSMContext):
         await message.answer('Пишите цифры')
 
 
-async def load_part(message: types.Message, state: FSMContext):
+async def FSM_load_part(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data['mentor_part'] = message.text
     await FSMAdmin.next()
     await message.answer('Укажите username ментора c@')
 
 
-async def load_username(message: types.Message, state: FSMContext):
+async def FSM_load_username(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data['mentor_username'] = message.text
         await message.answer(f"\nNumber: {data['mentor_number']}"
@@ -110,11 +110,11 @@ def register_handlers_fsm_mentor(dp: Dispatcher):
     dp.register_message_handler(cancel_reg, state='*', commands=['cancel'])
     dp.register_message_handler(cancel_reg, Text(equals='cancel', ignore_case=True), state='*')
     dp.register_message_handler(fsm_start, commands=['reg'])
-    dp.register_message_handler(load_id,state=FSMAdmin.mentor_id)
-    dp.register_message_handler(load_name, state=FSMAdmin.mentor_name)
-    dp.register_message_handler(load_mentor_id, state=FSMAdmin.mentor_number)
-    dp.register_message_handler(load_group, state=FSMAdmin.mentor_group)
-    dp.register_message_handler(load_part, state=FSMAdmin.mentor_part)
-    dp.register_message_handler(load_age, state=FSMAdmin.mentor_age)
-    dp.register_message_handler(load_username, state=FSMAdmin.mentor_username)
+    dp.register_message_handler(FSM_load_id,state=FSMAdmin.mentor_id)
+    dp.register_message_handler(FSM_load_name, state=FSMAdmin.mentor_name)
+    dp.register_message_handler(FSM_load_mentor_id, state=FSMAdmin.mentor_number)
+    dp.register_message_handler(FSM_load_group, state=FSMAdmin.mentor_group)
+    dp.register_message_handler(FSM_load_part, state=FSMAdmin.mentor_part)
+    dp.register_message_handler(FSM_load_age, state=FSMAdmin.mentor_age)
+    dp.register_message_handler(FSM_load_username, state=FSMAdmin.mentor_username)
     dp.register_message_handler(submit, state=FSMAdmin.submit)

@@ -37,11 +37,11 @@ part_markup = ReplyKeyboardMarkup(
     one_time_keyboard=True,
     row_width = 3,
 ).add(
-    KeyboardButton("Backend"),
-    KeyboardButton("Frontend"),
-    KeyboardButton("Android"),
-    KeyboardButton("UX-UI"),
-    KeyboardButton('IOS'),
-    KeyboardButton('fullstack'),
-    KeyboardButton('CANCEL')
+    KeyboardButton("JAVA"),
+    KeyboardButton("PHP"),
+    KeyboardButton("JAVASCRIPTS"),
+    KeyboardButton("C"),
+    KeyboardButton('C++'),
+    KeyboardButton('SQL'),
+    KeyboardButton('PYTHON')
 )

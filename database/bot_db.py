@@ -13,7 +13,7 @@ def create_sql():
     db.execute('''CREATE TABLE IF NOT EXISTS mentors_info
                (id INTEGER PRIMARY KEY ,
                mentor_name TEXT,
-               mentor_number INTEGER ,
+               mentor_number TEXT ,
                mentor_group TEXT,
                mentor_age INTEGER,
                mentor_part TEXT,
