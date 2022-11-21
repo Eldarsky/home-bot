@@ -3,21 +3,21 @@ import sqlite3
 from config import bot
 def sql_create():
     global db, cursor
-    db = sqlite3.connect('bot.sqlite3')
+    db = sqlite3.connect('mentorss.sql3')
     cursor = db.cursor()
 
     if db:
         print('База данных подключена')
 
     db.execute('CREATE TABLE IF NOT EXISTS anketa'
-               '(name TEXT, username TEXT,'
+               '(name TEXT,'
                'directions TEXT, age INTEGER, krupa INTEGER)')
     db.commit()
 
 async def sql_command_insert(state):
     async with state.proxy() as data:
         cursor.execute("INSERT INTO anketa VALUES "
-                       "(?, ?, ?, ?, ?, ? )", tuple(data.values()))
+                       "(?, ?, ?, ?)", tuple(data.values()))
         db.commit()
 
 async def sql_command_random(message):

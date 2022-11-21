@@ -9,7 +9,7 @@ async def quiz_2(call: types.CallbackQuery):
     markup = InlineKeyboardMarkup()
     button_call_2 = InlineKeyboardButton("NEXT", callback_data='button_call_2')
     markup.add(button_call_2)
-    question = 'Когда распался ССР ?'
+    question = 'Когда распался ССCР ?'
     answer = [
         '1992',
         '1994',

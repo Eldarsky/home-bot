@@ -1,7 +1,7 @@
 from aiogram import types, Dispatcher
 from config import ADMINS, bot
 from random import choice
-from database.bot_db import delete_sql, all_sql, get_all_usernames
+from database.bot_db import sql_command_all, sql_command_delete, sql_command_get_all_ids
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 
@@ -9,7 +9,7 @@ async def delete_data(message: types.Message):
     if message.from_user.id not in ADMINS:
         await message.answer('Only admins can delete the data')
     else:
-        mentors = await all_sql()
+        mentors = await sql_command_all()
         for mentor in mentors:
             await message.answer(f"Number: {mentor[2]}"
                                  f"\nName: {mentor[1]}"
@@ -23,7 +23,7 @@ async def delete_data(message: types.Message):
 
 
 async def complete_delete(call: types.CallbackQuery):
-    await delete_sql(call.data.replace('delete ', ''))
+    await sql_command_delete(call.data.replace('delete ', ''))
     await call.answer(text="deleted!", show_alert=True)
     await bot.delete_message(call.from_user.id, call.message.message_id)
 

@@ -3,7 +3,7 @@ from aiogram.dispatcher import  FSMContext
 from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher.filters.state import State,StatesGroup
 from config import bot
-from ceybords.client_kb import submit_markup, cancel_markup, gender_markup
+from ceybords.client_kb import submit_markup, cancel_markup, part_markup
 from config import ADMINS
 from database.bot_db import sql_command_insert
 
@@ -15,18 +15,17 @@ class FSMadmin(StatesGroup):
     submit = State()
 async  def fsm_start(message: types.Message):
     if message.chat.type == 'private':
-        await FSMadmin.name.set()
-        await message.answer("Здравствуйте как вас зовут?",
-                             reply_markup=cancel_markup)
+        if message.from_user.id in ADMINS:
+            await FSMadmin.name.set()
+            await message.answer("Здравствуйте как вас зовут?",
+                                 reply_markup=cancel_markup)
     else:
         await message.answer("Пиши в личку!")
 
 
 async def load_name(message:types.Message, state: FSMContext):
     async with state.proxy() as data:
-        data['id'] = message.from_user.id
         data['name'] = message.text
-        data['username'] = f'@{message.from_user.username}'
     await FSMadmin.next()
     await message.answer('Какое направления?', reply_markup=submit_markup)
 
@@ -40,13 +39,17 @@ async def load_age(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data['age'] = message.text
     await FSMadmin.next()
-    await message.answer("Ваша группа ??",reply_markup=gender_markup)
+    await message.answer("Ваша группа ??",reply_markup=part_markup)
 
 async def load_krupa(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data['krupa'] = message.text
-    await FSMadmin.next()
-    await message.answer("Очень рад, приятно познакомиться ",)
+        await message.answer(f"\nName: {data['name']}"
+                             f"\ndirections: {data['directions']}"
+                             f"\nage: {data['age']}"
+                             f"\nkrupa: {data['krupa']}")
+        await FSMadmin.next()
+        await message.answer('Все данные правильны?', reply_markup=submit_markup)
 
 async def submit(message: types.Message, state: FSMContext):
     if message.text.lower() == "да":
