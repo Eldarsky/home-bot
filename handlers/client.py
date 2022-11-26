@@ -56,6 +56,7 @@ async def parser_cartoons(message: types.Message):
             f"{item['title']}\n\n"
             f"{item['ling']}\n"
             f"{item['biography']}\n"
+            f"{item['info']}"
         )
 
 def register_handlers_client(dp: Dispatcher):
