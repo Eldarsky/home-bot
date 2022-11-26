@@ -2,6 +2,7 @@ from aiogram import Dispatcher, types
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from config import bot, dp
 from database.bot_db import sql_command_random
+from parsing import parser
 
 
 # @dp.message_handler(commands=['start'])
@@ -48,7 +49,14 @@ async def mem(call: types.CallbackQuery):
     photo = open('media/cover_6.jpg', 'rb')
     await bot.send_photo(call.from_user.id,photo=photo)
 
-
+async def parser_cartoons(message: types.Message):
+    items = parser.parser()
+    for item in items:
+        await message.answer(
+            f"{item['title']}\n\n"
+            f"{item['ling']}\n"
+            f"{item['biography']}\n"
+        )
 
 def register_handlers_client(dp: Dispatcher):
     dp.register_message_handler(start_handler, commands=['start'])
@@ -56,3 +64,4 @@ def register_handlers_client(dp: Dispatcher):
     dp.register_message_handler(info_handler, commands=['info'])
     dp.register_message_handler(mem,commands=['mem'])
     dp.register_message_handler(get_random_user,commands=['get'])
+    dp.register_message_handler(parser_cartoons, commands=['play'])

@@ -1,4 +1,4 @@
-import  aioschedule
+import aioschedule
 from aiogram import types, Dispatcher
 from config import bot
 import asyncio
